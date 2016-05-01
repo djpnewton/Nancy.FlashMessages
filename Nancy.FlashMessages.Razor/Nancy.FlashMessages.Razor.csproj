@@ -35,12 +35,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nancy">
-      <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.FlashMessages, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.FlashMessages.1.0.4.0\lib\net45\Nancy.FlashMessages.dll</HintPath>
+    <Reference Include="Nancy, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.1.4.3\lib\net40\Nancy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Nancy.ViewEngines.Razor, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
@@ -66,6 +63,12 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nancy.FlashMessages\Nancy.FlashMessages.csproj">
+      <Project>{d3b512b6-d8b9-4124-bafe-6e6aa575d5c6}</Project>
+      <Name>Nancy.FlashMessages</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
