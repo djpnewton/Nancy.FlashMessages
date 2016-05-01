@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nancy.Bootstrapper;
 using Nancy.FlashMessages.Extensions;
 using Nancy.Session;
+using Newtonsoft.Json;
 
 namespace Nancy.FlashMessages
 {
@@ -85,6 +86,15 @@ namespace Nancy.FlashMessages
             _configuration = configuration;
         }
 
+        IDictionary<string, IList<string>> DeserializeMessages()
+        {
+            IDictionary<string, IList<string>> messages = null;
+            var sessionValue = _session[SessionKey];
+            if (sessionValue != null)
+                messages = JsonConvert.DeserializeObject<IDictionary<string, IList<string>>>(sessionValue.ToString());
+            return messages;
+        }
+
         /// <summary>
         /// Adds a message to the relevant alert message list
         /// </summary>
@@ -92,12 +102,11 @@ namespace Nancy.FlashMessages
         /// <param name="message"></param>
         public void AddMessage(string messageType, string message)
         {
-            var messages = _session[SessionKey] as IDictionary<string, IList<string>>;
+            var messages = DeserializeMessages();
 
             if (messages == null)
             {
                 messages = new Dictionary<string, IList<string>>();
-                _session[SessionKey] = messages;
             }
 
             if (!messages.ContainsKey(messageType))
@@ -106,6 +115,7 @@ namespace Nancy.FlashMessages
             }
 
             messages[messageType].Add(message);
+            _session[SessionKey] = JsonConvert.SerializeObject(messages);
         }
 
         /// <summary>
@@ -115,7 +125,7 @@ namespace Nancy.FlashMessages
         /// <returns></returns>
         public IEnumerable<string> PeekMessages(string messageType)
         {
-            var messages = _session[SessionKey] as IDictionary<string, IList<string>>;
+            var messages = DeserializeMessages();
 
             if (messages != null && messages.ContainsKey(messageType))
             {
@@ -133,12 +143,13 @@ namespace Nancy.FlashMessages
         /// <returns></returns>
         public IEnumerable<string> PopMessages(string messageType)
         {
-            var messages = _session[SessionKey] as IDictionary<string, IList<string>>;
+            var messages = DeserializeMessages();
 
             if (messages == null || !messages.ContainsKey(messageType)) return null;
 
             var m = messages[messageType];
             messages.Remove(messageType);
+            _session[SessionKey] = JsonConvert.SerializeObject(messages);
             return m;
         }
     }
