@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nancy.Bootstrapper;
 using Nancy.FlashMessages.Extensions;
 using Nancy.Session;
@@ -54,6 +55,19 @@ namespace Nancy.FlashMessages
             {
                 ctx.SetFlashMessages(new FlashMessages(ctx.Request.Session, configuration));
                 return null;
+            });
+
+            // add item to *start* of pipeline so it executes before session cookie is saved
+            pipelines.AfterRequest.AddItemToStartOfPipeline(ctx =>
+            {
+                // pop flash messages out of session cookie (and place in viewbag) *if* a view is associated with the response
+                if (!string.IsNullOrEmpty(ctx.NegotiationContext.ViewName))
+                {
+                    var flashMessages = ctx.GetFlashMessages();
+                    var messages = flashMessages.PopAllMessages();
+                    if (messages != null && messages.Count() > 0)
+                        ctx.ViewBag.FlashMessages = messages;
+                }
             });
         }
 
@@ -151,6 +165,21 @@ namespace Nancy.FlashMessages
             messages.Remove(messageType);
             _session[SessionKey] = JsonConvert.SerializeObject(messages);
             return m;
+        }
+
+        /// <summary>
+        /// Retrieves the list of alert messages of all types, and removes the alerts
+        /// from the session
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, IList<string>> PopAllMessages()
+        {
+            var messages = DeserializeMessages();
+
+            if (messages == null) return null;
+
+            _session.Delete(SessionKey);
+            return messages;
         }
     }
 }
