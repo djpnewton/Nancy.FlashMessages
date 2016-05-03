@@ -71,17 +71,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-if $(ConfigurationName) == Debug (
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
-)
-if $(ConfigurationName) == Debug (
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
-)</PostBuildEvent>
-  </PropertyGroup>
   <Import Project="..\packages\Nancy.Viewengines.Razor.1.4.3\build\Nancy.ViewEngines.Razor.targets" Condition="Exists('..\packages\Nancy.Viewengines.Razor.1.4.3\build\Nancy.ViewEngines.Razor.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -96,4 +85,12 @@ xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\lib\Net40\N
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" Condition="'$(ConfigurationName)' == 'Debug'">
+      <Copy SourceFiles="$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" DestinationFolder="$(ProjectDir)bin\" />
+      <Copy SourceFiles="$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll" DestinationFolder="$(ProjectDir)bin\" />
+      <!--
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.4.3\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
+-->
+  </Target>
 </Project>
